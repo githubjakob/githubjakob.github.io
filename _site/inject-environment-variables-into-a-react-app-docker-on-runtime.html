@@ -4,22 +4,22 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <title>Oauth Web Message Response Mode</title><!-- Begin Jekyll SEO tag v2.7.1 -->
+  <title>Inject Environment Variables Into A React App Docker On Runtime</title><!-- Begin Jekyll SEO tag v2.7.1 -->
 <meta name="generator" content="Jekyll v3.9.5" />
-<meta property="og:title" content="Oauth Web Message Response Mode" />
+<meta property="og:title" content="Inject Environment Variables Into A React App Docker On Runtime" />
 <meta name="author" content="Jakob Zanker" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="I recently came across an interesting variation of an OAuth / OpenId Connect authentication flow: OAuth Authentication via a Popup." />
-<meta property="og:description" content="I recently came across an interesting variation of an OAuth / OpenId Connect authentication flow: OAuth Authentication via a Popup." />
+<meta name="description" content="In this blog post I want to show you how you can inject environment variables into a React application." />
+<meta property="og:description" content="In this blog post I want to show you how you can inject environment variables into a React application." />
 <link rel="canonical" href="http://localhost:4000/inject-environment-variables-into-a-react-app-docker-on-runtime.html" />
 <meta property="og:url" content="http://localhost:4000/inject-environment-variables-into-a-react-app-docker-on-runtime.html" />
 <meta property="og:site_name" content="Jakob Zanker" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2024-07-07T00:00:00+02:00" />
+<meta property="article:published_time" content="2020-10-26T00:00:00+01:00" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Oauth Web Message Response Mode" />
+<meta property="twitter:title" content="Inject Environment Variables Into A React App Docker On Runtime" />
 <script type="application/ld+json">
-{"author":{"@type":"Person","name":"Jakob Zanker"},"@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/inject-environment-variables-into-a-react-app-docker-on-runtime.html"},"description":"I recently came across an interesting variation of an OAuth / OpenId Connect authentication flow: OAuth Authentication via a Popup.","url":"http://localhost:4000/inject-environment-variables-into-a-react-app-docker-on-runtime.html","headline":"Oauth Web Message Response Mode","dateModified":"2024-07-07T00:00:00+02:00","datePublished":"2024-07-07T00:00:00+02:00","@context":"https://schema.org"}</script>
+{"dateModified":"2020-10-26T00:00:00+01:00","datePublished":"2020-10-26T00:00:00+01:00","@type":"BlogPosting","author":{"@type":"Person","name":"Jakob Zanker"},"description":"In this blog post I want to show you how you can inject environment variables into a React application.","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/inject-environment-variables-into-a-react-app-docker-on-runtime.html"},"url":"http://localhost:4000/inject-environment-variables-into-a-react-app-docker-on-runtime.html","headline":"Inject Environment Variables Into A React App Docker On Runtime","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Jakob Zanker" /><link rel="shortcut icon" type="image/x-icon" href="/logo.png" />
   <link rel="stylesheet" href="/assets/css/main.css" />
@@ -28,104 +28,97 @@
       <div class="w">
         <a href="/">..</a><article>
   <p class="post-meta">
-    <time datetime="2024-07-07 00:00:00 +0200">2024-07-07</time>
+    <time datetime="2020-10-26 00:00:00 +0100">2020-10-26</time>
   </p>
 
 
 <!--  <div class="header" style="height: 20px">-->
-<!--    <h1>Oauth Web Message Response Mode</h1>-->
+<!--    <h1>Inject Environment Variables Into A React App Docker On Runtime</h1>-->
 <!--  </div>-->
 
-  <h1>Oauth Web Message Response Mode</h1>
+  <h1>Inject Environment Variables Into A React App Docker On Runtime</h1>
 
 
-  <p>I recently came across an interesting variation of an OAuth / OpenId Connect authentication flow: OAuth Authentication via a Popup.</p>
+  <p>In this blog post I want to show you how you can inject environment variables into a React application.</p>
 
-<p>In this flow, the client application opens a popup window showing the login form of the authorization server. 
-After the user logs in successfully, the popup window closes and the client application in the parent window receives the user id.
-How does this work?</p>
+<hr />
 
-<p>As we will see, this flow makes use of the web message response mode of OAuth, which relies on the post message web API.</p>
+<p>Separating config from code is a good practice<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup> for designing applications. For example you need to add config to your front end application, when you have it deployed in different environments, e.g. a staging and a production environment.</p>
 
-<p>The protocol is currently a draft
-https://www.ietf.org/archive/id/draft-meyerzuselha-oauth-web-message-response-mode-00.html</p>
+<p>Baking the configuration into the code or the Docker image both violates the principle of separating config from code.</p>
 
-<p>Let’s dive into these two topics and see how it works.</p>
+<p>The solution is to pass as environment variables, e.g. the API URL of the back end, to React when the Docker container starts up.</p>
 
-<h2 id="post-message">Post Message</h2>
+<p>But since a React application is just bundled static HTML/JavaScript/CSS, your front end cannot directly pick up the environment variables available on the server side!</p>
 
-<p>In a nutshell, the post message web API allows you to send and receive data between different browser windows.</p>
+<p>This blog post shows you how you nonetheless can do it:</p>
 
-<p>MDN has great documentation about 
-https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage</p>
+<h2 id="inject-environment-variables-into-a-react-application-on-runtime">Inject environment variables into a React application on runtime</h2>
 
-<p>I think this is best understood with an example:</p>
+<p>The Create React App documentation gives a hint<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">2</a></sup> how to inject configuration into a React application: On the server side, you can set global variables on the window object inside your HTML.</p>
 
-<p>For our little demo we need two pages: The <code class="language-plaintext highlighter-rouge">parent.html</code> page, and the popup <code class="language-plaintext highlighter-rouge">child.html</code>.</p>
+<p>Here is a step-by-step guide of how what you need to do:</p>
 
-<p>First the <code class="language-plaintext highlighter-rouge">parent.html</code> page opens the popup and registers an event listener for the ‘message’ event:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>window.open('child.html', 'childWindow', 'width=600,height=400');
+<p>Firstly, you set the required environment variables on the window object. To do that create a JavaScript file called env_vars.js:</p>
 
-// Listen for messages from the child window
-window.addEventListener('message', (event) =&gt; {
-    console.log("Message", event?.data)
-});
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>window.API_URL = "localhost:8080";
 </code></pre></div></div>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// obtain a reference to the parent window
-const windowRef = window.opener
-windowRef.postMessage({message: "Hello from child page!"}, window.location.origin);
+<p>Secondly, the env_vars.js JavaScript is embedded in the HTML of your front end application:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+
+&lt;head&gt;
+&lt;script type="text/javascript" src="env_vars.js"&gt;&lt;/script&gt;
 </code></pre></div></div>
 
-<p>// TODO add full working example</p>
+<p>Next, you add a bash script that picks up the environment variables and writes them to the env_vars.js file. After that the bash script it starts to serve the front end.</p>
 
-<p>https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cat &lt;&lt;EOF &gt; /usr/src/app/build/env_vars.js
+window.API_URL="$API_URL";
+EOF
 
-<p>Now that we understand how to send and receive data through post message, we can see how OAuth makes use of it.</p>
-
-<h2 id="web-message-response-mode-in-oauth">Web message response mode in OAuth</h2>
-
-<p>The OAuth Authorization Code Flow</p>
-
-<p>https://www.oauth.com/playground/authorization-code.html</p>
-
-<p>Probably the 
-<code class="language-plaintext highlighter-rouge">query</code> response mode returns the authorization code as a query parameter in the redirect to the <code class="language-plaintext highlighter-rouge">redirect_url</code>.</p>
-
-<p>In contrast, <code class="language-plaintext highlighter-rouge">web_message</code> response mode returns the authorization code as a message via the post message interface.</p>
-
-<p>To test this, we can create a little demo that opens the authorize url of our OAuth identity server via window.open as a popup
-and starts to listen for the code as a <code class="language-plaintext highlighter-rouge">message</code> event.</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const authorizeUrl = `https://my-idp.com/authorize?response_type=code&amp;response_mode=web_message...` 
+serve -s ./build/ -l 8080
 </code></pre></div></div>
 
-<p>The flow will now be like this:</p>
+<p>Finally, set the Dockerfile’s entry point to the bash script:</p>
 
-<ul>
-  <li>Our application opens the popup with the link to the authorization server.</li>
-  <li>Our application will start listening to the post message event.</li>
-  <li>The user authenticates in the popup.</li>
-  <li>The authorization sends the authorization code back to our application via the post message event.</li>
-  <li>Our application receives the authorization code and exchanges it for the access and id token.</li>
-</ul>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>RUN chmod +x docker-entrypoint.sh
 
-<p>There are a couple of demo applications out there for debugging OAuth auth servers (e.g. https://oauthdebugger.com/), but I could not find one that supported the <code class="language-plaintext highlighter-rouge">web_message</code> response mode, so I build my own:</p>
+ENTRYPOINT ["/usr/src/app/docker-entrypoint.sh"]
+</code></pre></div></div>
 
-<p>https://githubjakob.github.io/oauth-web-message-debugger/</p>
+<p>That’s it!</p>
 
-<h2 id="support">Support</h2>
+<p>The environment variables inside the Docker container are now made available to the JavaScript running on the client side.</p>
 
-<p>The response mode described in this article is supported by Auth0</p>
+<h2 id="run-it-in-docker">Run it in Docker</h2>
 
-<p>https://auth0.com/docs/authenticate/protocols/oauth</p>
+<p>Now when you start up the Docker container, you can pass a environment variable to React:</p>
 
-<p>What I described in the example is also more or less what their SDK <code class="language-plaintext highlighter-rouge">auth0-spa-js</code> does.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run -e API_URL=test.myapp.com docker-inject-env-react-runtime
+</code></pre></div></div>
 
-<p>https://github.com/auth0/auth0-spa-js/blob/main/src/Auth0Client.ts#L372C7-L372C40</p>
+<h2 id="github-of-the-demo-project">GitHub of the Demo project</h2>
 
-<p>Octa has a similar <code class="language-plaintext highlighter-rouge">okta_post_message</code> response mode, and while I did not test it, I assume it works similiar: https://developer.okta.com/docs/reference/api/oidc/</p>
+<p>I created a Demo project on GitHub that contains a working example.<sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote" rel="footnote">3</a></sup></p>
 
+<hr data-content="footnotes" />
+
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:1" role="doc-endnote">
+      <p><a href="https://12factor.net/config">https://12factor.net/config</a> <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:2" role="doc-endnote">
+      <p><a href="https://create-react-app.dev/docs/title-and-meta-tags/#injecting-data-from-the-server-into-the-page">https://create-react-app.dev/docs/title-and-meta-tags/#injecting-data-from-the-server-into-the-page</a> <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:3" role="doc-endnote">
+      <p><a href="https://github.com/githubjakob/react-inject-env-docker-runtime">https://github.com/githubjakob/react-inject-env-docker-runtime</a> <a href="#fnref:3" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
 
 
 
