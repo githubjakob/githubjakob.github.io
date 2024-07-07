@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2024-07-07T20:37:18+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Jakob Zanker</title><subtitle>Software Developer, based in Munich
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2024-07-07T20:43:31+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Jakob Zanker</title><subtitle>Software Developer, based in Munich
 </subtitle><author><name>Jakob Zanker</name></author><entry><title type="html">Oauth Web Message Response Mode</title><link href="http://localhost:4000/oauth-web-message-response-mode.html" rel="alternate" type="text/html" title="Oauth Web Message Response Mode" /><published>2024-07-07T00:00:00+02:00</published><updated>2024-07-07T00:00:00+02:00</updated><id>http://localhost:4000/oauth-web-message-response-mode</id><content type="html" xml:base="http://localhost:4000/oauth-web-message-response-mode.html">&lt;p&gt;I recently came across an interesting variation of an OAuth / OpenId Connect authentication flow: OAuth Authentication via a Popup.&lt;/p&gt;
 
 &lt;p&gt;In this flow, the client application opens a popup window showing the login form of the authorization server. 
@@ -28,7 +28,7 @@ How does this work?&lt;/p&gt;
 
 &lt;p&gt;For our little demo we need two pages: The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;parent.html&lt;/code&gt; page, and the popup &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;child.html&lt;/code&gt;.&lt;/p&gt;
 
-&lt;p&gt;First the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;parent.html&lt;/code&gt; page opens the popup and registers an event listener for the ‘message’ event:&lt;/p&gt;
+&lt;p&gt;First the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;parent.html&lt;/code&gt; page opens the popup and registers an event listener for the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;message&lt;/code&gt; event:&lt;/p&gt;
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;window.open(&apos;child.html&apos;, &apos;childWindow&apos;, &apos;width=600,height=400&apos;);
 
 // Listen for messages from the child window
@@ -36,6 +36,8 @@ window.addEventListener(&apos;message&apos;, (event) =&amp;gt; {
     console.log(&quot;Message&quot;, event?.data)
 });
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then, the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;child.html&lt;/code&gt; obtains a reference to the parent window, and uses the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;postMessage&lt;/code&gt; method on it to send it:&lt;/p&gt;
 
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// obtain a reference to the parent window
 const windowRef = window.opener
@@ -48,7 +50,8 @@ windowRef.postMessage({message: &quot;Hello from child page!&quot;}, window.loca
 
 &lt;p&gt;The &lt;a href=&quot;https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow&quot;&gt;OAuth Authorization Code Flow describes&lt;/a&gt; how the client application receives an authorization code that then is exchanged for a token.&lt;/p&gt;
 
-&lt;p&gt;In the “normal” case, the authorization server redirects the user back to the redirect_uri and attaches the code as a query parameter in the redirect_uri. This is the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;query&lt;/code&gt; response mode. (The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fragment&lt;/code&gt; response mode attaches the code as part of the &lt;a href=&quot;https://en.wikipedia.org/wiki/URI_fragment&quot;&gt;URL fragment&lt;/a&gt;, so after the hash symbol &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;#&lt;/code&gt;.)&lt;/p&gt;
+&lt;p&gt;In the “normal” case, the authorization server redirects the user back to the redirect_uri and attaches the code as a query parameter in the redirect_uri.
+This is the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;query&lt;/code&gt; response mode. (The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fragment&lt;/code&gt; response mode attaches the code as part of the &lt;a href=&quot;https://en.wikipedia.org/wiki/URI_fragment&quot;&gt;URL fragment&lt;/a&gt;, so after the hash symbol &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;#&lt;/code&gt;.)&lt;/p&gt;
 
 &lt;p&gt;In contrast, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;web_message&lt;/code&gt; response mode returns the authorization code as a message via the post message interface.&lt;/p&gt;
 

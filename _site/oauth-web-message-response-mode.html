@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Oauth Web Message Response Mode</title><!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v3.9.5" />
+<meta property="og:title" content="Oauth Web Message Response Mode" />
+<meta name="author" content="Jakob Zanker" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I recently came across an interesting variation of an OAuth / OpenId Connect authentication flow: OAuth Authentication via a Popup." />
+<meta property="og:description" content="I recently came across an interesting variation of an OAuth / OpenId Connect authentication flow: OAuth Authentication via a Popup." />
+<link rel="canonical" href="http://localhost:4000/oauth-web-message-response-mode.html" />
+<meta property="og:url" content="http://localhost:4000/oauth-web-message-response-mode.html" />
+<meta property="og:site_name" content="Jakob Zanker" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-07-07T00:00:00+02:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Oauth Web Message Response Mode" />
+<script type="application/ld+json">
+{"dateModified":"2024-07-07T00:00:00+02:00","datePublished":"2024-07-07T00:00:00+02:00","@type":"BlogPosting","author":{"@type":"Person","name":"Jakob Zanker"},"description":"I recently came across an interesting variation of an OAuth / OpenId Connect authentication flow: OAuth Authentication via a Popup.","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/oauth-web-message-response-mode.html"},"url":"http://localhost:4000/oauth-web-message-response-mode.html","headline":"Oauth Web Message Response Mode","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Jakob Zanker" /><link rel="shortcut icon" type="image/x-icon" href="/logo.png" />
+  <link rel="stylesheet" href="/assets/css/main.css" />
+</head><body a="auto">
+    <main class="page-content" aria-label="Content">
+      <div class="w">
+        <a href="/">.. back</a><article>
+  <p class="post-meta">
+    <time datetime="2024-07-07 00:00:00 +0200">2024-07-07</time>
+  </p>
+
+
+<!--  <div class="header" style="height: 20px">-->
+<!--    <h1>Oauth Web Message Response Mode</h1>-->
+<!--  </div>-->
+
+  <h1>Oauth Web Message Response Mode</h1>
+
+
+  <p>I recently came across an interesting variation of an OAuth / OpenId Connect authentication flow: OAuth Authentication via a Popup.</p>
+
+<p>In this flow, the client application opens a popup window showing the login form of the authorization server. 
+After the user logs in successfully, the popup window closes and the client application in the parent window receives the user id.
+How does this work?</p>
+
+<p>As we will see, this flow makes use of the web message response mode of OAuth, which relies on the post message web API.</p>
+
+<p>The protocol is <a href="https://www.ietf.org/archive/id/draft-meyerzuselha-oauth-web-message-response-mode-00.html">currently a draft</a> - I can recommend reading through the standard since it explains it probably better than I am going to do.</p>
+
+<p>Let’s dive into these two topics and see how it works:</p>
+
+<ol>
+  <li>Post message web API..</li>
+  <li>… and how it is used in web message OAuth response mode</li>
+</ol>
+
+<hr />
+
+<h2 id="sending-data-between-different-browser-windows-with-post-message">Sending data between different browser windows with post message</h2>
+
+<p>In a nutshell, the post message web API allows you to send and receive data between different browser windows.</p>
+
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage">MDN has great documentation about post message</a></p>
+
+<p>I think this is best understood with an example:</p>
+
+<p>For our little demo we need two pages: The <code class="language-plaintext highlighter-rouge">parent.html</code> page, and the popup <code class="language-plaintext highlighter-rouge">child.html</code>.</p>
+
+<p>First the <code class="language-plaintext highlighter-rouge">parent.html</code> page opens the popup and registers an event listener for the <code class="language-plaintext highlighter-rouge">message</code> event:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>window.open('child.html', 'childWindow', 'width=600,height=400');
+
+// Listen for messages from the child window
+window.addEventListener('message', (event) =&gt; {
+    console.log("Message", event?.data)
+});
+</code></pre></div></div>
+
+<p>Then, the <code class="language-plaintext highlighter-rouge">child.html</code> obtains a reference to the parent window, and uses the <code class="language-plaintext highlighter-rouge">postMessage</code> method on it to send it:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// obtain a reference to the parent window
+const windowRef = window.opener
+windowRef.postMessage({message: "Hello from child page!"}, window.location.origin);
+</code></pre></div></div>
+
+<p>Now that we understand how to send and receive data through post message, we can see how OAuth makes use of it.</p>
+
+<h2 id="web-message-response-mode-in-oauth">Web message response mode in OAuth</h2>
+
+<p>The <a href="https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow">OAuth Authorization Code Flow describes</a> how the client application receives an authorization code that then is exchanged for a token.</p>
+
+<p>In the “normal” case, the authorization server redirects the user back to the redirect_uri and attaches the code as a query parameter in the redirect_uri.
+This is the <code class="language-plaintext highlighter-rouge">query</code> response mode. (The <code class="language-plaintext highlighter-rouge">fragment</code> response mode attaches the code as part of the <a href="https://en.wikipedia.org/wiki/URI_fragment">URL fragment</a>, so after the hash symbol <code class="language-plaintext highlighter-rouge">#</code>.)</p>
+
+<p>In contrast, <code class="language-plaintext highlighter-rouge">web_message</code> response mode returns the authorization code as a message via the post message interface.</p>
+
+<p>To test this, we can create a little demo that opens the authorization url of our OAuth identity server via window.open as a popup, and then starts to listen for the code as a <code class="language-plaintext highlighter-rouge">message</code> event.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const authorizeUrl = `https://my-idp.com/authorize?response_type=code&amp;response_mode=web_message...` 
+
+window.open(authorizeUrl, 'childWindow', 'width=600,height=400');
+
+// Listen for messages from the child window
+window.addEventListener('message', (event) =&gt; {
+    console.log("Message", event?.data)
+});
+</code></pre></div></div>
+
+<p>This is exactly what we did before in our example about post message.</p>
+
+<p>The flow will now be like this:</p>
+
+<ul>
+  <li>Our application opens the popup with the link to the authorization server.</li>
+  <li>Our application will start listening to the post message event.</li>
+  <li>The user authenticates in the popup.</li>
+  <li>The authorization sends the authorization code back to our application via the post message event.</li>
+  <li>Our application receives the authorization code and exchanges it for the access and id token.</li>
+</ul>
+
+<p>There are a couple of demo applications out there for debugging OAuth auth servers.</p>
+
+<ul>
+  <li>For example, the <a href="https://www.oauth.com/playground/authorization-code.html">OAuth Playground</a> is really useful for understanding the basics behind OAuth and different OAuth flows.</li>
+  <li>Or <a href="https://oauthdebugger.com/]">OAuth Debugger</a></li>
+</ul>
+
+<p>But I could not find one that supported the <code class="language-plaintext highlighter-rouge">web_message</code> response mode, so I build my own:</p>
+
+<p><a href="https://githubjakob.github.io/oauth-web-message-debugger/">https://githubjakob.github.io/oauth-web-message-debugger/</a></p>
+
+<h2 id="support">Support</h2>
+
+<p>The response mode described in this article <a href="https://auth0.com/docs/authenticate/protocols/oauth">is supported by Auth0</a>.</p>
+
+<p>We can see that Auth0 SDK <code class="language-plaintext highlighter-rouge">auth0-spa-js</code> is implementing the same logic that we implemented in the demo.</p>
+
+<p>First building the authorization url using <code class="language-plaintext highlighter-rouge">response_mode=web_message</code></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const params = await this._prepareAuthorizeUrl(
+      options.authorizationParams || {},
+      { response_mode: 'web_message' },
+      window.location.origin
+    );
+</code></pre></div></div>
+<p>Source <a href="https://github.com/auth0/auth0-spa-js/blob/main/src/Auth0Client.ts#L372C7-L372C40">https://github.com/auth0/auth0-spa-js/blob/main/src/Auth0Client.ts#L372C7-L372C40</a></p>
+
+<p>Then setting up the event listener for the message event:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>window.addEventListener('message', popupEventListener);
+</code></pre></div></div>
+<p>Source: <a href="https://github.com/auth0/auth0-spa-js/blob/main/src/utils.ts#L136">https://github.com/auth0/auth0-spa-js/blob/main/src/utils.ts#L136</a></p>
+
+<p>Octa has a similar <code class="language-plaintext highlighter-rouge">okta_post_message</code> response mode, and while I did not test it, I assume it works similiar: https://developer.okta.com/docs/reference/api/oidc/</p>
+
+<hr />
+
+
+
+
+</article>
+      </div>
+    </main>
+
+    
+  </body>
+</html>
