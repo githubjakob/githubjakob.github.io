@@ -1,6 +1,7 @@
 ---
 layout: post
 slug: oauth-web-message-response-mode
+title: "Exploring OAuth Web Message Response Mode: Authentication via Popup"
 redirect_from:
   - /blog/oauth-web-message-response-mode/
 ---
