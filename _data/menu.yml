@@ -1,0 +1,19 @@
+# For documentation on this file, see:
+# https://github.com/riggraz/no-style-please#customize-the-menu
+
+entries:
+  - title: About me
+    entries:
+      - title: My academic background is in Computer Science and Philosophy.
+      - title: "I work at <a href='https://www.project-lary.com/'>Project Lary</a>."
+      - title: "Find me on <a href='https://github.com/githubjakob'>Github</a> or <a href='https://www.linkedin.com/in/jakob-zanker-939305b1'>LinkedIn</a>."
+
+  - title: Blog
+    post_list:
+      limit: 5
+      show_more: true
+      show_more_text: See archive...
+      show_more_url: archive.html
+
+  - title: Imprint
+    url: imprint

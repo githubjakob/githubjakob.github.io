@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Single Fluentd Log Stream Per Kubernetes Service</title><!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v3.9.5" />
+<meta property="og:title" content="Single Fluentd Log Stream Per Kubernetes Service" />
+<meta name="author" content="Jakob Zanker" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this blog post I show you how to create a single fluentd log stream per kubernetes micro service in AWS CloudWatch." />
+<meta property="og:description" content="In this blog post I show you how to create a single fluentd log stream per kubernetes micro service in AWS CloudWatch." />
+<link rel="canonical" href="http://localhost:4000/single-fluentd-log-stream-per-kubernetes-service.html" />
+<meta property="og:url" content="http://localhost:4000/single-fluentd-log-stream-per-kubernetes-service.html" />
+<meta property="og:site_name" content="Jakob Zanker" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-08-29T00:00:00+02:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Single Fluentd Log Stream Per Kubernetes Service" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Jakob Zanker"},"@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/single-fluentd-log-stream-per-kubernetes-service.html"},"description":"In this blog post I show you how to create a single fluentd log stream per kubernetes micro service in AWS CloudWatch.","url":"http://localhost:4000/single-fluentd-log-stream-per-kubernetes-service.html","headline":"Single Fluentd Log Stream Per Kubernetes Service","dateModified":"2019-08-29T00:00:00+02:00","datePublished":"2019-08-29T00:00:00+02:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Jakob Zanker" /><link rel="shortcut icon" type="image/x-icon" href="/logo.png" />
+  <link rel="stylesheet" href="/assets/css/main.css" />
+</head><body a="auto">
+    <main class="page-content" aria-label="Content">
+      <div class="w">
+        <a href="/">..</a><article>
+  <p class="post-meta">
+    <time datetime="2019-08-29 00:00:00 +0200">2019-08-29</time>
+  </p>
+
+
+<!--  <div class="header" style="height: 20px">-->
+<!--    <h1>Single Fluentd Log Stream Per Kubernetes Service</h1>-->
+<!--  </div>-->
+
+  <h1>Single Fluentd Log Stream Per Kubernetes Service</h1>
+
+
+  <p>In this blog post I show you how to create a single fluentd log stream per kubernetes micro service in AWS CloudWatch.</p>
+
+<p>I was setting up logging for a kubernetes cluster (Amazon EKS) with fluentd. After I followed the tutorial provided by AWS, I found that the log streams showing in AWS CloudWatch are per container per pod. That means that you cannot see all the logs of a service in one place, because you have your logs from one service distributed over multiple log streams.</p>
+
+<p>Being new to working with fluentd, it took me quite some time to change the configuration, so that you have all the logs of one service unified in a log stream, which, I think, makes much more sense as a default config. This blog post shows, how to do it.</p>
+
+<h2 id="by-default-fluentd-creates-one-log-stream-per-container-per-pod">By default Fluentd creates one log stream per container per pod</h2>
+
+<p>If you follow the tutorial on how to set up CloudWatch logging for your AWS EKS cluster with fluentd, which is provided here in the AWS documentation<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup>, you end up with a fluentd configuration that creates one log stream per container per pod. This has some unpractical implications. E.g. if you restart a pod, the logs of the newly created pod will end up in a separate log stream, as the new pod will get a new id. In CloudWatch it looks like this (it’s just one service called “scraper-worker”, with one replica, but after several restarts, the logs end up in different places):</p>
+
+<p><img src="/assets/images/fluentd-one-per-pod2.png" alt="fluentd one log stream per log" />
+<em>One fluentd log stream per container per pod in AWS Cloudwatch – hard to read</em></p>
+
+<h2 id="how-to-create-a-fluentd-log-stream-for-each-k8s-micro-service">How to create a Fluentd log stream for each k8s micro service</h2>
+
+<p>You can adapt the fluentd configuration, so that it creates a log stream per service.</p>
+
+<p>For this edit your <code class="language-plaintext highlighter-rouge">fluentd.yaml</code> (e.g. the one that is linked in the AWS documentation) and, in the part that corresponds to the fluentd ConfigMap, find the line where the stream_name record of your container logs is set.</p>
+
+<p>Here you can change the <code class="language-plaintext highlighter-rouge">stream_name</code>, which is currently set to <code class="language-plaintext highlighter-rouge">${tag_parts[3]}</code>. We want to change it to the service name, because it needs to stay constant over pod restarts. For this we can use the <code class="language-plaintext highlighter-rouge">container_name</code> of the docker image. This placeholder is provided by the fluentd kubernetes metadata plugin<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">2</a></sup>, which by default is enabled in the configuration from the AWS documentation. We can access the <code class="language-plaintext highlighter-rouge">container_name</code> placeholder with <code class="language-plaintext highlighter-rouge">${record["kubernetes"]["container_name"]}</code>. We also need to set <code class="language-plaintext highlighter-rouge">enable_ruby</code> to true, as described in this issue of the metadata plugin<sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote" rel="footnote">3</a></sup>.</p>
+
+<p>The whole part you need to change now looks like this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;filter **&gt;
+  @type record_transformer
+  @id filter_containers_stream_transformer
+  enable_ruby true
+  &lt;record&gt;
+    stream_name ${record["kubernetes"]["container_name"]}
+  &lt;/record&gt;
+&lt;/filter&gt;
+</code></pre></div></div>
+
+<h2 id="log-files-in-k8s">Log files in k8s</h2>
+
+<p>As you have seen, by default the <code class="language-plaintext highlighter-rouge">stream_name</code> was set to <code class="language-plaintext highlighter-rouge">${tag_parts[3]}</code>. <code class="language-plaintext highlighter-rouge">${tag_parts[3]}</code> selects the 4th part of the tag of the log, which results in the long stream name that we see on the screenshot, e.g. <code class="language-plaintext highlighter-rouge">fluentd-cloudwatch-25xcb_amazon-cloudwatch_fluentd-cloudwatch-421aee3d54acbe6be47ac140cc88a71934efc945451963b7b210294e203a740e</code>.</p>
+
+<p>The whole tag is even a bit longer and corresponds to the path and file name of the log file. Kubernetes places the log files for each docker container of each pod in <code class="language-plaintext highlighter-rouge">/var/log/containers</code> on one of the nodes. As fluentd collects these files, it separates the path and filename by dots, which, for example, leads to the complete tag var.log.containers.<code class="language-plaintext highlighter-rouge">fluentd-cloudwatch-25xcb_amazon-cloudwatch_fluentd-cloudwatch-421aee3d54acbe6be47ac140cc88a71934efc945451963b7b210294e203a740e.log</code>.</p>
+
+<p>As we can see, the 4th part of the tag (selected by <code class="language-plaintext highlighter-rouge">tag_parts[3]</code>) consists of <code class="language-plaintext highlighter-rouge">&lt;pod-name&gt;_&lt;namespace&gt;_&lt;container-name-container-id&gt;</code>. The container-name without the container-id is the part that stays the same for all the services that use the same docker image. That’s why it makes sense to use that as the log stream tag.</p>
+
+<h2 id="one-log-stream-per-service-in-aws-cloudwatch">One log stream per service in AWS CloudWatch</h2>
+
+<p>After you have changed the <code class="language-plaintext highlighter-rouge">stream_name</code> in <code class="language-plaintext highlighter-rouge">fluentd.yaml</code>, apply the configmap and restart the pods.</p>
+
+<p><code class="language-plaintext highlighter-rouge">kubectl apply -f fluentd.yaml</code></p>
+
+<p><code class="language-plaintext highlighter-rouge">kubectl -n &lt;namespace-of-fluentd-pods&gt; delete pod &lt;pod-names&gt;</code></p>
+
+<p>Now you have a single fluentd log stream per kubernetes service in AWS CloudWatch. The logs in AWS CloudWatch look much cleaner. All the logs of every service are in one place, in one log stream, even if we restart pods or have multiple replicas.</p>
+
+<p><img src="/assets/images/fluentd-one-per-pod2.png" alt="fluentd one log stream per log" />
+<em>One fluentd log stream per service in AWS CloudWatch – so much cleaner!</em></p>
+
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:1" role="doc-endnote">
+      <p>https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-logs.html <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:2" role="doc-endnote">
+      <p>https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:3" role="doc-endnote">
+      <p>https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter/issues/175 <a href="#fnref:3" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+
+
+</article>
+      </div>
+    </main>
+
+    
+  </body>
+</html>

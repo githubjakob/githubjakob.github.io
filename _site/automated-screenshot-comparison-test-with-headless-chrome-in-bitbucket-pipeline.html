@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Automated Screenshot Comparison Test With Headless Chrome In Bitbucket Pipeline</title><!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v3.9.5" />
+<meta property="og:title" content="Automated Screenshot Comparison Test With Headless Chrome In Bitbucket Pipeline" />
+<meta name="author" content="Jakob Zanker" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this blog post I want to show how to set up automated screenshot comparison tests with a headless Chrome browser, using Puppeteer and Pixelmatch, in a Bitbucket pipeline. A simple react application will be used to test." />
+<meta property="og:description" content="In this blog post I want to show how to set up automated screenshot comparison tests with a headless Chrome browser, using Puppeteer and Pixelmatch, in a Bitbucket pipeline. A simple react application will be used to test." />
+<link rel="canonical" href="http://localhost:4000/automated-screenshot-comparison-test-with-headless-chrome-in-bitbucket-pipeline.html" />
+<meta property="og:url" content="http://localhost:4000/automated-screenshot-comparison-test-with-headless-chrome-in-bitbucket-pipeline.html" />
+<meta property="og:site_name" content="Jakob Zanker" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-09-06T00:00:00+02:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Automated Screenshot Comparison Test With Headless Chrome In Bitbucket Pipeline" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Jakob Zanker"},"@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/automated-screenshot-comparison-test-with-headless-chrome-in-bitbucket-pipeline.html"},"description":"In this blog post I want to show how to set up automated screenshot comparison tests with a headless Chrome browser, using Puppeteer and Pixelmatch, in a Bitbucket pipeline. A simple react application will be used to test.","url":"http://localhost:4000/automated-screenshot-comparison-test-with-headless-chrome-in-bitbucket-pipeline.html","headline":"Automated Screenshot Comparison Test With Headless Chrome In Bitbucket Pipeline","dateModified":"2019-09-06T00:00:00+02:00","datePublished":"2019-09-06T00:00:00+02:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Jakob Zanker" /><link rel="shortcut icon" type="image/x-icon" href="/logo.png" />
+  <link rel="stylesheet" href="/assets/css/main.css" />
+</head><body a="auto">
+    <main class="page-content" aria-label="Content">
+      <div class="w">
+        <a href="/">..</a><article>
+  <p class="post-meta">
+    <time datetime="2019-09-06 00:00:00 +0200">2019-09-06</time>
+  </p>
+
+
+<!--  <div class="header" style="height: 20px">-->
+<!--    <h1>Automated Screenshot Comparison Test With Headless Chrome In Bitbucket Pipeline</h1>-->
+<!--  </div>-->
+
+  <h1>Automated Screenshot Comparison Test With Headless Chrome In Bitbucket Pipeline</h1>
+
+
+  <p>In this blog post I want to show how to set up automated screenshot comparison tests with a headless Chrome browser, using Puppeteer and Pixelmatch, in a Bitbucket pipeline. A simple react application will be used to test.</p>
+
+<p>Screenshots are taken using Puppeteer and a headless Chrome browser. The screenshots are compared with baseline images using Pixelmatch and a simple helper function. If the actual screenshot matches the baseline image, the test succeeds, otherwise it fails. The react application under test uses a rest backend (which is mocked in the pipeline).</p>
+
+<p>In the end of the blog post, you’ll find a link to a Github repository that contains a working example of the setup.</p>
+
+<hr />
+
+<h2 id="quick-start-run-the-tests-from-the-project-in-github">Quick start: Run the tests from the project in Github</h2>
+
+<p>The project contains configuration for the automated browser tests to run in a bitbucket pipeline. The easiest way to run the tests, is to run the bitbucket pipeline locally using</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/githubjakob/react-puppeteer-screenshot-test
+npm install -g bbrun
+docker build -t node-11-browser .
+bbrun --template bitbucket-pipelines.yml
+</code></pre></div></div>
+
+<p>The run the tests without the bitbucket pipeline, .ie. without bbrun, you can execute each node command separately:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm start
+npm run mock
+npm run browsertests:mobile
+npm run browsertests:desktop
+</code></pre></div></div>
+
+<h2 id="tips-running-the-tests-in-the-project">Tips running the tests in the project</h2>
+
+<p>In case a screenshot is not matching, you can create a diff that shows the non-matching areas. To enable creating a diff set writeDiff to true in BrowserTestUtils.js. This works with and without using bbrun and is disabled by default.</p>
+
+<p>You can adjust the threshold of how many non-matching pixels result in a failing test. You can also adjust the threshold used by Pixelmatch to determine when a single pixel is counted as failed. See the constants in BrowserTestUtils.js for both thresholds.</p>
+
+<p>For debugging, you can set headless to false in BrowserTestUtils.js to have Puppeteer start up a Chrome browser (with GUI) for the tests.</p>
+
+<h2 id="screenshot-comparison-test-with-puppeteer--pixelmatch-mocked-backend-with-server-json">Screenshot comparison test with Puppeteer &amp; Pixelmatch, mocked backend with server-json</h2>
+
+<p>The project contains a basic setup for a screenshot comparison test for a react application. Screenshots are taken with Puppeteer and compared with the expected baseline image using Pixelmatch. The backend for the react application is mocked with server-json.</p>
+
+<h2 id="take-screenshots-with-puppeteer">Take screenshots with Puppeteer</h2>
+
+<p>Puppeteer provides the API to control a headless Chrome browser. With puppeteer we can open pages, navigate, click on links and take the screenshots. App.test.jsx contains a simple testcase using Jest and Puppeteer that open up the homepage and take a screenshot.</p>
+
+<h2 id="compare-screenshots-with-pixelmatch">Compare screenshots with Pixelmatch</h2>
+
+<p>Once the screenshot is taken by Puppeteer, we use Pixelmatch to compare the screenshot with the baseline image. BrowserTestUtils.js contains the helper functions to perform the screenshot comparison.</p>
+
+<p>An alternative to having a customer helper function is using a library like puppeteer-screenshot-tester</p>
+
+<h2 id="testing-mobile-and-desktop-viewport-resolution">Testing mobile and desktop viewport resolution</h2>
+
+<p>Width and height of the browser viewport are set via env variables. Because of this, we can reuse the same test cases for testing different resolutions. See package.json how the two node scripts npm run browsertests:desktop and npm run browsertests:mobile run the same test but with different env variables width and height set. See also the folder src/browsertests/screenshots how this changes the filename for the baseline images.</p>
+
+<h2 id="mocking-the-backend">Mocking the backend</h2>
+
+<p>Our test react app assumes a backend to retrieve data with rest calls. For the browsertests we need to mock the backend. For this we use server-json. The json payload for the rest calls is stored in backend-mock/db.json, backend-mock/routes.json allows to map urls to database entries in backend-mock/db.json.</p>
+
+<h2 id="run-automated-browsertests-in-bitbucket-pipeline">Run automated browsertests in Bitbucket pipeline</h2>
+
+<p>This project includes a bitbucket-pipelines.yml that contains the configuration to run the browsertest in a bitbucket pipeline.</p>
+
+<h2 id="send-react-and-mock-process-to-background">Send react and mock process to background</h2>
+
+<p>An ampersand (‘&amp;’) is added to the commands so that the process is sent to the background and the commands are run in parallel.</p>
+
+<p>Even though the npm start process is now in the background the pipeline will finish after the test has finished, i.e. the non-completing react process in the background does not block the whole pipeline: If the test succeeds (fails), the whole pipeline step also succeeds (fails).</p>
+
+<h2 id="start-react-without-opening-browser-window">Start react without opening browser window</h2>
+
+<p>By default npm start opens a browser window. This will make the pipeline crash. To prevent this we need to start react with BROWSER=none npm start.</p>
+
+<h2 id="docker-build-image">Docker build image</h2>
+
+<p>To run the puppeteer tests inside a bitbucket pipleine, we need to install the dependencies for Chrome/Puppeteer in the bitbucket build image.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt update &amp;&amp; apt install -y gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 \
+ libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 \
+ libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 \
+ libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 \
+ libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
+</code></pre></div></div>
+
+<p>We can do this either directly in the pipeline or create a docker image that we can reuse. The project contains a Dockfile that we can build and that is used in bitbucket-pipelines.yml:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build -t node-11-browser .
+</code></pre></div></div>
+
+<p>It is also possible to use an image provided by CircleCI, e.g. circleci/node:jessie-browsers</p>
+
+<h2 id="reference-to-the-github-project">Reference to the Github project</h2>
+
+<p>https://github.com/githubjakob/react-puppeteer-screenshot-test</p>
+
+
+
+</article>
+      </div>
+    </main>
+
+    
+  </body>
+</html>

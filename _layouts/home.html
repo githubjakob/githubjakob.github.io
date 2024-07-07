@@ -1,0 +1,14 @@
+---
+layout: default
+---
+<header>
+  <h1>Jakob Zanker</h1>
+  <p>Software Engineer based in Munich</p>
+  {%-if site.theme_config.show_description-%}
+    <p>{{ site.description }}</p>
+  {%-endif-%}
+</header>
+
+{%-include menu_item.html collection=site.data.menu.entries-%}
+
+{{ content }}
