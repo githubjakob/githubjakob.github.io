@@ -110,3 +110,21 @@ img + em {
   font-style: normal;
   font-size: smaller;
 }
+
+.draft-label {
+  background-color: lightblue;
+  color: #333;
+  font-size: 0.8em;
+  padding: 2px 5px;
+  margin-left: 10px;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+a:visited {
+  color: black;
+}
+
+a {
+  color: black;
+}

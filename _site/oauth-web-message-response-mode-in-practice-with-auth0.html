@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Implementing an Auth0 Client Application from Scratch (OAuth Web Message Response Mode - Part 2)</title>
+<!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v3.9.5">
+<meta property="og:title" content="Implementing an Auth0 Client Application from Scratch (OAuth Web Message Response Mode - Part 2)">
+<meta name="author" content="Jakob Zanker">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="In part one we explored how the OAuth response mode web_message works and how it is using the post message web API to return the authorization code to the client application.">
+<meta property="og:description" content="In part one we explored how the OAuth response mode web_message works and how it is using the post message web API to return the authorization code to the client application.">
+<link rel="canonical" href="http://localhost:4000/oauth-web-message-response-mode-in-practice-with-auth0.html">
+<meta property="og:url" content="http://localhost:4000/oauth-web-message-response-mode-in-practice-with-auth0.html">
+<meta property="og:site_name" content="Jakob Zanker">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2024-07-21T00:00:00+02:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Implementing an Auth0 Client Application from Scratch (OAuth Web Message Response Mode - Part 2)">
+<script type="application/ld+json">
+{"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/oauth-web-message-response-mode-in-practice-with-auth0.html"},"author":{"@type":"Person","name":"Jakob Zanker"},"@type":"BlogPosting","description":"In part one we explored how the OAuth response mode web_message works and how it is using the post message web API to return the authorization code to the client application.","url":"http://localhost:4000/oauth-web-message-response-mode-in-practice-with-auth0.html","headline":"Implementing an Auth0 Client Application from Scratch (OAuth Web Message Response Mode - Part 2)","dateModified":"2024-07-21T00:00:00+02:00","datePublished":"2024-07-21T00:00:00+02:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Jakob Zanker">
+<link rel="shortcut icon" type="image/x-icon" href="/icon.png">
+  <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body a="auto">
+    <main class="page-content" aria-label="Content">
+      <div class="w">
+        <a href="/">.. back</a><article>
+  <p class="post-meta">
+    <time datetime="2024-07-21 00:00:00 +0200">2024-07-21</time>
+  </p>
+
+
+  
+  <div class="draft-notice">
+    <span class="draft-label">DRAFT</span>
+  </div>
+  
+
+  <h1>Implementing an Auth0 Client Application from Scratch (OAuth Web Message Response Mode - Part 2)</h1>
+
+
+
+
+  <p>In <a href="/oauth-web-message-response-mode.html">part one</a>
+we explored how the OAuth response mode <code class="language-plaintext highlighter-rouge">web_message</code> works and how it is using the post message 
+web API to return the authorization code to the client application.</p>
+
+<p>In this second part we want to look how this works in detail.</p>
+
+<p>Specifically, we will implement an application from scratch using Auth0 as an authorization server.</p>
+
+<p>The final result can be found here:
+<a href="https://githubjakob.github.io/oauth-web-message-debugger/">https://githubjakob.github.io/oauth-web-message-debugger/</a></p>
+
+<p><img src="/assets/images/auth0/screenshot.png" alt="Screenshot of the demo application we will build" loading="lazy"></p>
+
+<p>To gain some better understanding, we will not use the Auth0 Javascript SDK, but implement all the required steps for the OAuth / OIDC authentication flow ourselves.</p>
+
+<p>There are a couple of demo applications out there for debugging OAuth auth servers:</p>
+
+<ul>
+  <li>For example, the <a href="https://www.oauth.com/playground/authorization-code.html">OAuth Playground</a> is really useful for understanding the basics behind OAuth and different OAuth flows.</li>
+  <li>Also, <a href="https://oauthdebugger.com/]">OAuth Debugger</a> is a nice little tool to interact with your authorization server</li>
+  <li>without implementing it in your actual application.</li>
+</ul>
+
+<p>But I could not find one that supported the <code class="language-plaintext highlighter-rouge">web_message</code> response mode. So let’s implement our own OAuth client!</p>
+
+<hr>
+
+<p>In part one we already gave a high level description of the required steps:</p>
+
+<ol>
+  <li>The client application opens the popup with the link to the authorization server.</li>
+  <li>Our application will start listening to the post message event.</li>
+  <li>The user authenticates in the popup.</li>
+  <li>The authorization sends the authorization code back to our application via the post message event.</li>
+  <li>Our application receives the authorization code and exchanges it for the access and id token.</li>
+</ol>
+
+<p>You can find the full implementation here and follow along in the code, while we go through each of the steps:</p>
+
+<p><a href="https://github.com/githubjakob/oauth-web-message-debugger">https://github.com/githubjakob/oauth-web-message-debugger</a></p>
+
+<h2 id="implementation-of-the-oauth-client-application">Implementation of the OAuth client application</h2>
+
+<p>We will build a demo application for debugging purposes and integrate it with Auth0 as auth provider.</p>
+
+<h3 id="building-the-url-to-the-authorization-server">Building the url to the authorization server</h3>
+
+<p>The first step is to build the URL to the authorization server to start the flow.</p>
+
+<p>https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.1</p>
+
+<p>defines only two required arguments:</p>
+
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">response_type</code> must be set to <code class="language-plaintext highlighter-rouge">code</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">client_id</code></li>
+</ul>
+
+<h3 id="opening-the-link-in-a-popup">Opening the Link in a popup</h3>
+
+<p>The next step is easy: We open the URL in a popup</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>window.open(url, 'childWindow', 'width=600,height=400');
+</code></pre></div></div>
+
+<h3 id="subscribing-to-the-message-event">Subscribing to the message event</h3>
+
+<p>Now we need to register for the post message event. In the <code class="language-plaintext highlighter-rouge">web_message</code> response mode the auth server will send us the response via this event:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>window.addEventListener('message', function (event) {
+            console.log("Event", event)
+</code></pre></div></div>
+
+<h3 id="code-exchange">Code Exchange</h3>
+
+<p>Since we use the <code class="language-plaintext highlighter-rouge">code</code> we need to exchange the authorization code that we received vie the message event
+for the access, refresh and id token.</p>
+
+<p>https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3</p>
+
+<p>defines</p>
+
+<h3 id="parse-the-id-token">Parse the ID Token</h3>
+
+<p>The following is optional, but it makes sense if we want to look into the data we get back from the auth server /token endpoint:
+we need to parse the ID token und</p>
+
+<p>We can head over to https://jwt.io/#debugger-io and paste the id token there.</p>
+
+<h2 id="testing-the-implementation-with-auth0">Testing the implementation with Auth0</h2>
+
+<p>Now let’s test the implementation with Auth0.</p>
+
+<p>We need to create an application in Auth0 and configure a few options.</p>
+
+<p>After registration and signup in Auth0 we need to create an application:</p>
+
+<p><img src="/assets/images/auth0/auth0-create-application.png" alt="Auth0 application creation flow" loading="lazy"></p>
+
+<p>For our purpose, we select “Javascript”:</p>
+
+<p><img src="/assets/images/auth0/auth0-create-application-2.png" alt="Create an OAuth application in Auth0" loading="lazy"></p>
+
+<p><img src="/assets/images/auth0/auth0-create-application-3-javascript.png" alt="Select Javascript" loading="lazy"></p>
+
+<p>We have to configure two options:</p>
+
+<p>First, the allowed origin:</p>
+
+<p><img src="/assets/images/auth0/auth0-allowed-origin.png" alt="Configure the allowed origin in the Auth0 application" loading="lazy"></p>
+
+<p>Second, the allowed callback:</p>
+
+<p><img src="/assets/images/auth0/auth0-configure-callback.png" alt="Configure the allowed callback in the Auth0 application" loading="lazy"></p>
+
+<p>Now we need to copy two values in the form of our demo application:</p>
+
+<ul>
+  <li>ClientId</li>
+  <li>Application Url</li>
+  <li>The redirect url</li>
+</ul>
+
+<p><img src="/assets/images/auth0/auth0-clientid-url.png" alt="Copy the client id and application url" loading="lazy"></p>
+
+<p>Clicking the “authorize” button opens the url in the popup:</p>
+
+<p><img src="/assets/images/auth0/auth0-open-link.png" alt="Click the authorize button to open the link" loading="lazy"></p>
+
+<p>We can register a new user:</p>
+
+<p><img src="/assets/images/auth0/auth0-register.png" alt="Register a new user in Auth0" loading="lazy"></p>
+
+<p>After we finish the registration, we see that our demo application received the auth code via the message event:</p>
+
+<p><img src="/assets/images/auth0/auth0-auth-code.png" alt="Demo application receives the auth code" loading="lazy"></p>
+
+<p>We can exchange the auth code for the id token:</p>
+
+<p><img src="/assets/images/auth0/auth0-id-token.png" alt="Exchange the auth code for the id token" loading="lazy"></p>
+
+<p>And finally, parse the id JWT token to display the content:</p>
+
+<p><img src="/assets/images/auth0/auth0-jwt.png" alt="Parse the id token" loading="lazy"></p>
+
+<h2 id="comparing-with-the-auth0-javascript-sdk">Comparing with the Auth0 Javascript SDK</h2>
+
+<p>To wrap up this post, let’s compare our implementation with how the Auth0 SDK does it.</p>
+
+<p>The source code for the <code class="language-plaintext highlighter-rouge">auth0-spa-js</code> is on GitHub: https://github.com/auth0/auth0-spa-js/blob/main/src/Auth0Client.ts</p>
+
+<p>The relevant part is the <code class="language-plaintext highlighter-rouge">loginWithPopup</code> function.</p>
+
+<p>Looking at the code, we can see that Auth0 SDK <code class="language-plaintext highlighter-rouge">auth0-spa-js</code> is implementing the same logic that we implemented in the demo.</p>
+
+<p>First building the authorization url using <code class="language-plaintext highlighter-rouge">response_mode=web_message</code></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const params = await this._prepareAuthorizeUrl(
+      options.authorizationParams || {},
+      { response_mode: 'web_message' },
+      window.location.origin
+    );
+</code></pre></div></div>
+<p>Source <a href="https://github.com/auth0/auth0-spa-js/blob/main/src/Auth0Client.ts#L372C7-L372C40">https://github.com/auth0/auth0-spa-js/blob/main/src/Auth0Client.ts#L372C7-L372C40</a></p>
+
+<p>Then setting up the event listener for the message event in the <code class="language-plaintext highlighter-rouge">runPopup</code> function:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>window.addEventListener('message', popupEventListener);
+</code></pre></div></div>
+<p>Source: <a href="https://github.com/auth0/auth0-spa-js/blob/main/src/utils.ts#L136">https://github.com/auth0/auth0-spa-js/blob/main/src/utils.ts#L136</a></p>
+
+<p>Finally exchanging the code for the token</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>await this._requestToken(
+      {
+        code: codeResult.code as string,
+        ///...
+</code></pre></div></div>
+<p>Source: <a href="https://github.com/auth0/auth0-spa-js/blob/main/src/Auth0Client.ts#L394">https://github.com/auth0/auth0-spa-js/blob/main/src/Auth0Client.ts#L394</a></p>
+
+<h2 id="other-support">Other Support</h2>
+
+<p>Octa has a similar <code class="language-plaintext highlighter-rouge">okta_post_message</code> response mode, and while I did not test it, I assume it works similiar: https://developer.okta.com/docs/reference/api/oidc/</p>
+
+
+
+</article>
+      </div>
+    </main>
+
+    
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.min.js"></script>
+  </body>
+</html>

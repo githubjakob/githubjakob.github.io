@@ -5,7 +5,13 @@ require 'uri'
 module Jekyll
   module CapitalizeAll
     def capitalize_all(words)
-      return words.split(' ').map(&:capitalize).join(' ')
+      words.split(/(\s+|\b)/).map do |word|
+        if word.match(/\w/)
+          word.capitalize
+        else
+          word
+        end
+      end.join
     end
   end
 end

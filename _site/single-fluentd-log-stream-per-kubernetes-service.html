@@ -1,29 +1,34 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Single Fluentd Log Stream Per Kubernetes Service</title><!-- Begin Jekyll SEO tag v2.7.1 -->
-<meta name="generator" content="Jekyll v3.9.5" />
-<meta property="og:title" content="Single Fluentd Log Stream Per Kubernetes Service" />
-<meta name="author" content="Jakob Zanker" />
-<meta property="og:locale" content="en_US" />
-<meta name="description" content="In this blog post I show you how to create a single fluentd log stream per kubernetes micro service in AWS CloudWatch." />
-<meta property="og:description" content="In this blog post I show you how to create a single fluentd log stream per kubernetes micro service in AWS CloudWatch." />
-<link rel="canonical" href="http://localhost:4000/single-fluentd-log-stream-per-kubernetes-service.html" />
-<meta property="og:url" content="http://localhost:4000/single-fluentd-log-stream-per-kubernetes-service.html" />
-<meta property="og:site_name" content="Jakob Zanker" />
-<meta property="og:type" content="article" />
-<meta property="article:published_time" content="2019-08-29T00:00:00+02:00" />
-<meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Single Fluentd Log Stream Per Kubernetes Service" />
+  <title>Single Fluentd Log Stream Per Kubernetes Service</title>
+<!-- Begin Jekyll SEO tag v2.7.1 -->
+<meta name="generator" content="Jekyll v3.9.5">
+<meta property="og:title" content="Single Fluentd Log Stream Per Kubernetes Service">
+<meta name="author" content="Jakob Zanker">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="In this blog post I show you how to create a single fluentd log stream per kubernetes micro service in AWS CloudWatch.">
+<meta property="og:description" content="In this blog post I show you how to create a single fluentd log stream per kubernetes micro service in AWS CloudWatch.">
+<link rel="canonical" href="http://localhost:4000/single-fluentd-log-stream-per-kubernetes-service.html">
+<meta property="og:url" content="http://localhost:4000/single-fluentd-log-stream-per-kubernetes-service.html">
+<meta property="og:site_name" content="Jakob Zanker">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-08-29T00:00:00+02:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Single Fluentd Log Stream Per Kubernetes Service">
 <script type="application/ld+json">
-{"dateModified":"2019-08-29T00:00:00+02:00","datePublished":"2019-08-29T00:00:00+02:00","@type":"BlogPosting","author":{"@type":"Person","name":"Jakob Zanker"},"description":"In this blog post I show you how to create a single fluentd log stream per kubernetes micro service in AWS CloudWatch.","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/single-fluentd-log-stream-per-kubernetes-service.html"},"url":"http://localhost:4000/single-fluentd-log-stream-per-kubernetes-service.html","headline":"Single Fluentd Log Stream Per Kubernetes Service","@context":"https://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/single-fluentd-log-stream-per-kubernetes-service.html"},"author":{"@type":"Person","name":"Jakob Zanker"},"@type":"BlogPosting","description":"In this blog post I show you how to create a single fluentd log stream per kubernetes micro service in AWS CloudWatch.","url":"http://localhost:4000/single-fluentd-log-stream-per-kubernetes-service.html","headline":"Single Fluentd Log Stream Per Kubernetes Service","dateModified":"2019-08-29T00:00:00+02:00","datePublished":"2019-08-29T00:00:00+02:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
-<link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Jakob Zanker" /><link rel="shortcut icon" type="image/x-icon" href="/terminal.svg" />
-  <link rel="stylesheet" href="/assets/css/main.css" />
-</head><body a="auto">
+<link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Jakob Zanker">
+<link rel="shortcut icon" type="image/x-icon" href="/icon.png">
+  <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body a="auto">
     <main class="page-content" aria-label="Content">
       <div class="w">
         <a href="/">.. back</a><article>
@@ -32,11 +37,11 @@
   </p>
 
 
-<!--  <div class="header" style="height: 20px">-->
-<!--    <h1>Single Fluentd Log Stream Per Kubernetes Service</h1>-->
-<!--  </div>-->
+  
 
   <h1>Single Fluentd Log Stream Per Kubernetes Service</h1>
+
+
 
 
   <p>In this blog post I show you how to create a single fluentd log stream per kubernetes micro service in AWS CloudWatch.</p>
@@ -49,7 +54,7 @@
 
 <p>If you follow the tutorial on how to set up CloudWatch logging for your AWS EKS cluster with fluentd, which is provided here in the AWS documentation<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup>, you end up with a fluentd configuration that creates one log stream per container per pod. This has some unpractical implications. E.g. if you restart a pod, the logs of the newly created pod will end up in a separate log stream, as the new pod will get a new id. In CloudWatch it looks like this (it’s just one service called “scraper-worker”, with one replica, but after several restarts, the logs end up in different places):</p>
 
-<p><img src="/assets/images/fluentd-one-per-pod2.png" alt="fluentd one log stream per log" />
+<p><img src="/assets/images/fluentd-one-per-pod2.png" alt="fluentd one log stream per log" loading="lazy">
 <em>One fluentd log stream per container per pod in AWS Cloudwatch – hard to read</em></p>
 
 <h2 id="how-to-create-a-fluentd-log-stream-for-each-k8s-micro-service">How to create a Fluentd log stream for each k8s micro service</h2>
@@ -90,19 +95,19 @@
 
 <p>Now you have a single fluentd log stream per kubernetes service in AWS CloudWatch. The logs in AWS CloudWatch look much cleaner. All the logs of every service are in one place, in one log stream, even if we restart pods or have multiple replicas.</p>
 
-<p><img src="/assets/images/fluentd-one-per-pod2.png" alt="fluentd one log stream per log" />
+<p><img src="/assets/images/fluentd-one-per-pod2.png" alt="fluentd one log stream per log" loading="lazy">
 <em>One fluentd log stream per service in AWS CloudWatch – so much cleaner!</em></p>
 
 <div class="footnotes" role="doc-endnotes">
   <ol>
     <li id="fn:1" role="doc-endnote">
-      <p>https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-logs.html <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+      <p>https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-logs.html <a href="#fnref:1" class="reversefootnote" role="doc-backlink">↩</a></p>
     </li>
     <li id="fn:2" role="doc-endnote">
-      <p>https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+      <p>https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter <a href="#fnref:2" class="reversefootnote" role="doc-backlink">↩</a></p>
     </li>
     <li id="fn:3" role="doc-endnote">
-      <p>https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter/issues/175 <a href="#fnref:3" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+      <p>https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter/issues/175 <a href="#fnref:3" class="reversefootnote" role="doc-backlink">↩</a></p>
     </li>
   </ol>
 </div>
@@ -114,5 +119,6 @@
     </main>
 
     
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.min.js"></script>
   </body>
 </html>

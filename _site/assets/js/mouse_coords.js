@@ -15,3 +15,7 @@ window.addEventListener('scroll', () => {
 
   header.style.transform = `translateY(${transformValue}px)`;
 });
+
+var lazyLoadInstance = new LazyLoad({
+  // Your custom settings go here
+});

@@ -4,6 +4,7 @@ slug: oauth-web-message-response-mode
 title: "Exploring OAuth Web Message Response Mode: Authentication via Popup"
 redirect_from:
   - /blog/oauth-web-message-response-mode/
+draft: true
 ---
 
 
@@ -84,6 +85,10 @@ window.addEventListener('message', (event) => {
 
 This is exactly what we did before in our example about post message.
 
+## Complete flow
+
+To wrap up this post, let's look at the complete flow.
+
 The flow will now be like this: 
 
 - Our application opens the popup with the link to the authorization server.
@@ -92,43 +97,7 @@ The flow will now be like this:
 - The authorization sends the authorization code back to our application via the post message event.
 - Our application receives the authorization code and exchanges it for the access and id token.
 
-There are a couple of demo applications out there for debugging OAuth auth servers. 
 
-- For example, the [OAuth Playground](https://www.oauth.com/playground/authorization-code.html) is really useful for understanding the basics behind OAuth and different OAuth flows. 
-- Or [OAuth Debugger](https://oauthdebugger.com/])
-
-But I could not find one that supported the `web_message` response mode, so I build my own:
-
-[https://githubjakob.github.io/oauth-web-message-debugger/](https://githubjakob.github.io/oauth-web-message-debugger/)
-
-## Support
-
-The response mode described in this article [is supported by Auth0](https://auth0.com/docs/authenticate/protocols/oauth).
-
-We can see that Auth0 SDK `auth0-spa-js` is implementing the same logic that we implemented in the demo.
-
-First building the authorization url using `response_mode=web_message`
-
-```
-const params = await this._prepareAuthorizeUrl(
-      options.authorizationParams || {},
-      { response_mode: 'web_message' },
-      window.location.origin
-    );
-```
-Source [https://github.com/auth0/auth0-spa-js/blob/main/src/Auth0Client.ts#L372C7-L372C40](https://github.com/auth0/auth0-spa-js/blob/main/src/Auth0Client.ts#L372C7-L372C40)
-
-
-Then setting up the event listener for the message event:
-```
-window.addEventListener('message', popupEventListener);
-```
-Source: [https://github.com/auth0/auth0-spa-js/blob/main/src/utils.ts#L136](https://github.com/auth0/auth0-spa-js/blob/main/src/utils.ts#L136)
-
-Octa has a similar `okta_post_message` response mode, and while I did not test it, I assume it works similiar: https://developer.okta.com/docs/reference/api/oidc/
-
-
----
 
 
 
