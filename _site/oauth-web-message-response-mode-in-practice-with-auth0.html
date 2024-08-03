@@ -38,10 +38,6 @@
 
 
   
-  <div class="draft-notice">
-    <span class="draft-label">DRAFT</span>
-  </div>
-  
 
   <h1>Implementing an Auth0 Client Application from Scratch (OAuth Web Message Response Mode - Part 2)</h1>
 
@@ -52,9 +48,7 @@
 we explored how the OAuth response mode <code class="language-plaintext highlighter-rouge">web_message</code> works and how it is using the post message 
 web API to return the authorization code to the client application.</p>
 
-<p>In this second part we want to look how this works in detail.</p>
-
-<p>Specifically, we will implement an application from scratch using Auth0 as an authorization server.</p>
+<p>In this second part I want to show how this works in detail. For demonstration purposes, we will implement an OAuth client application from scratch using Auth0 as an authorization server.</p>
 
 <p>The final result can be found here:
 <a href="https://githubjakob.github.io/oauth-web-message-debugger/">https://githubjakob.github.io/oauth-web-message-debugger/</a></p>
@@ -97,9 +91,7 @@ web API to return the authorization code to the client application.</p>
 
 <p>The first step is to build the URL to the authorization server to start the flow.</p>
 
-<p>https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.1</p>
-
-<p>defines only two required arguments:</p>
+<p>The <a href="https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.1">standard defines only two required arguments</a> for the authorization url:</p>
 
 <ul>
   <li>
@@ -118,25 +110,44 @@ web API to return the authorization code to the client application.</p>
 
 <p>Now we need to register for the post message event. In the <code class="language-plaintext highlighter-rouge">web_message</code> response mode the auth server will send us the response via this event:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>window.addEventListener('message', function (event) {
-            console.log("Event", event)
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>window.addEventListener('message', (event) =&gt; {
+    console.log("Message", event?.data)
+});
 </code></pre></div></div>
 
 <h3 id="code-exchange">Code Exchange</h3>
 
-<p>Since we use the <code class="language-plaintext highlighter-rouge">code</code> we need to exchange the authorization code that we received vie the message event
-for the access, refresh and id token.</p>
+<p>Since we use the <code class="language-plaintext highlighter-rouge">code</code> we need to exchange the authorization code that we received via the message event to get 
+the access, refresh and id token.</p>
 
-<p>https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3</p>
+<p>Again, the <a href="https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3">standard defines the POST endpoint and the required payload</a> for the token exchange: <code class="language-plaintext highlighter-rouge">/oauth/token</code></p>
 
-<p>defines</p>
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">grant_type</code> REQUIRED.  Value MUST be set to “authorization_code”.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">code</code>  The authorization code received from the
+authorization server.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">redirect_uri</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">client_id</code></p>
+  </li>
+</ul>
+
+<p>The response of this request will contain the access, refresh, and id token.</p>
 
 <h3 id="parse-the-id-token">Parse the ID Token</h3>
 
 <p>The following is optional, but it makes sense if we want to look into the data we get back from the auth server /token endpoint:
-we need to parse the ID token und</p>
+we need to decode the JWT tokens.</p>
 
-<p>We can head over to https://jwt.io/#debugger-io and paste the id token there.</p>
+<p>To do this, we can head over to <a href="https://jwt.io/#debugger-io">https://jwt.io/#debugger-io</a> and paste the token there.</p>
+
+<p>Et viola, we completed the flow!</p>
 
 <h2 id="testing-the-implementation-with-auth0">Testing the implementation with Auth0</h2>
 
@@ -228,9 +239,15 @@ we need to parse the ID token und</p>
 </code></pre></div></div>
 <p>Source: <a href="https://github.com/auth0/auth0-spa-js/blob/main/src/Auth0Client.ts#L394">https://github.com/auth0/auth0-spa-js/blob/main/src/Auth0Client.ts#L394</a></p>
 
-<h2 id="other-support">Other Support</h2>
+<h2 id="summary">Summary</h2>
 
-<p>Octa has a similar <code class="language-plaintext highlighter-rouge">okta_post_message</code> response mode, and while I did not test it, I assume it works similiar: https://developer.okta.com/docs/reference/api/oidc/</p>
+<p>In this blog post we walked through the complete OAuth authentication flow for the <code class="language-plaintext highlighter-rouge">web_message</code> response mode.</p>
+
+<p>We implemented a little demo client application and tested it together with Auth0 as authorization server.</p>
+
+<p>You can find the complete code here on my Github: <a href="https://github.com/githubjakob/oauth-web-message-debugger">https://github.com/githubjakob/oauth-web-message-debugger</a></p>
+
+<p>The OAuth demo client application is hosted here: <a href="https://githubjakob.github.io/oauth-web-message-debugger/">https://githubjakob.github.io/oauth-web-message-debugger/</a></p>
 
 
 

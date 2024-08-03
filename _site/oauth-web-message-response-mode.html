@@ -33,10 +33,6 @@
 
 
   
-  <div class="draft-notice">
-    <span class="draft-label">DRAFT</span>
-  </div>
-  
 
   <h1>Exploring OAuth Web Message Response Mode: Authentication via Popup</h1>
 
@@ -56,8 +52,8 @@ How does this work?</p>
 <p>Let’s dive into these two topics and see how it works:</p>
 
 <ol>
-  <li>Post message web API..</li>
-  <li>… and how it is used in web message OAuth response mode</li>
+  <li>First, we look at the post message web API</li>
+  <li>Second, we see how it is used in web message OAuth response mode</li>
 </ol>
 
 <hr />
@@ -88,7 +84,9 @@ const windowRef = window.opener
 windowRef.postMessage({message: "Hello from child page!"}, window.location.origin);
 </code></pre></div></div>
 
-<p>Now that we understand how to send and receive data through post message, we can see how OAuth makes use of it.</p>
+<p>We will see the messages data logged in the parent browser window.</p>
+
+<p>Now that we understand how to send and receive data through post message, let’s look at how OAuth makes use of it.</p>
 
 <h2 id="web-message-response-mode-in-oauth">Web message response mode in OAuth</h2>
 

@@ -2,7 +2,6 @@
 layout: post
 slug: oauth-web-message-response-mode-in-practice-with-auth0
 title: "Implementing an Auth0 Client Application from Scratch (OAuth Web Message Response Mode - Part 2)"
-draft: true
 ---
 
 
@@ -12,9 +11,7 @@ In [part one]({% link _posts/2024-07-07-oauth-web-message-response-mode.md %})
 we explored how the OAuth response mode `web_message` works and how it is using the post message 
 web API to return the authorization code to the client application.
 
-In this second part we want to look how this works in detail. 
-
-Specifically, we will implement an application from scratch using Auth0 as an authorization server. 
+In this second part I want to show how this works in detail. For demonstration purposes, we will implement an OAuth client application from scratch using Auth0 as an authorization server. 
 
 The final result can be found here:
 [https://githubjakob.github.io/oauth-web-message-debugger/](https://githubjakob.github.io/oauth-web-message-debugger/)
@@ -53,12 +50,9 @@ We will build a demo application for debugging purposes and integrate it with Au
 
 ### Building the url to the authorization server
 
-The first step is to build the URL to the authorization server to start the flow.
+The first step is to build the URL to the authorization server to start the flow. 
 
-
-https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.1
-
-defines only two required arguments: 
+The [standard defines only two required arguments](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.1) for the authorization url:
 
 - `response_type` must be set to `code`.
 - `client_id` 
@@ -78,33 +72,38 @@ window.open(url, 'childWindow', 'width=600,height=400');
 Now we need to register for the post message event. In the `web_message` response mode the auth server will send us the response via this event:
 
 ```
-window.addEventListener('message', function (event) {
-            console.log("Event", event)
+window.addEventListener('message', (event) => {
+    console.log("Message", event?.data)
+});
 ```
 
 
 ### Code Exchange
 
-Since we use the `code` we need to exchange the authorization code that we received vie the message event
-for the access, refresh and id token.
+Since we use the `code` we need to exchange the authorization code that we received via the message event to get 
+the access, refresh and id token.
 
+Again, the [standard defines the POST endpoint and the required payload](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3) for the token exchange: `/oauth/token`
 
-https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3
+- `grant_type` REQUIRED.  Value MUST be set to "authorization_code".
 
-defines 
+- `code`  The authorization code received from the
+authorization server.
 
+- `redirect_uri` 
 
+- `client_id`
+
+The response of this request will contain the access, refresh, and id token.
 
 ### Parse the ID Token
 
 The following is optional, but it makes sense if we want to look into the data we get back from the auth server /token endpoint:
-we need to parse the ID token und 
+we need to decode the JWT tokens. 
 
+To do this, we can head over to [https://jwt.io/#debugger-io](https://jwt.io/#debugger-io) and paste the token there.
 
-We can head over to https://jwt.io/#debugger-io and paste the id token there.
-
-
-
+Et viola, we completed the flow!
 
 
 ## Testing the implementation with Auth0
@@ -210,7 +209,13 @@ await this._requestToken(
 ```
 Source: [https://github.com/auth0/auth0-spa-js/blob/main/src/Auth0Client.ts#L394](https://github.com/auth0/auth0-spa-js/blob/main/src/Auth0Client.ts#L394)
 
-## Other Support
 
+## Summary 
 
-Octa has a similar `okta_post_message` response mode, and while I did not test it, I assume it works similiar: https://developer.okta.com/docs/reference/api/oidc/
+In this blog post we walked through the complete OAuth authentication flow for the `web_message` response mode.
+
+We implemented a little demo client application and tested it together with Auth0 as authorization server.
+
+You can find the complete code here on my Github: [https://github.com/githubjakob/oauth-web-message-debugger](https://github.com/githubjakob/oauth-web-message-debugger)
+
+The OAuth demo client application is hosted here: [https://githubjakob.github.io/oauth-web-message-debugger/](https://githubjakob.github.io/oauth-web-message-debugger/)

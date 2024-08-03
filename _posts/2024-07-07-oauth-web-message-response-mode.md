@@ -4,7 +4,6 @@ slug: oauth-web-message-response-mode
 title: "Exploring OAuth Web Message Response Mode: Authentication via Popup"
 redirect_from:
   - /blog/oauth-web-message-response-mode/
-draft: true
 ---
 
 
@@ -22,8 +21,8 @@ The protocol is [currently a draft](https://www.ietf.org/archive/id/draft-meyerz
 
 Let's dive into these two topics and see how it works: 
 
-1. Post message web API..
-2. ... and how it is used in web message OAuth response mode
+1. First, we look at the post message web API
+2. Second, we see how it is used in web message OAuth response mode
 
 ---
 
@@ -57,8 +56,9 @@ const windowRef = window.opener
 windowRef.postMessage({message: "Hello from child page!"}, window.location.origin);
 ```
 
+We will see the messages data logged in the parent browser window.
 
-Now that we understand how to send and receive data through post message, we can see how OAuth makes use of it.
+Now that we understand how to send and receive data through post message, let's look at how OAuth makes use of it.
 
 
 ## Web message response mode in OAuth
