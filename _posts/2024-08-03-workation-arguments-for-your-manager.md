@@ -1,28 +1,50 @@
 ---
 layout: post
-slug: workation-arguments-for-your-manager
-title: "wip"
+slug: workation-from-another-time-zone
+title: "My personal experience of working remotely as a software engineer"
+draft: true
 published: false
 ---
 
-personal perspective
+> "My best holiday was when I was working remotely for 4 weeks from Bali in 2022!" 
+
+My girlfriend likes to quote me saying this, when we once were discussing our holiday plans.
+
+Why am I such a great fan of this "workation" combining working and holiday style of traveling?
+
+In this blog post, I want to share my personal experience with working remotely as a software engineer.
+
+
+
+I mean here the temporary "workation" style o<!--  -->f working remotely with an otherwise classical company and an on-site team 
+sitting in a real office.
+
+Ideally, you can take away some inspiration for your self or some arguments for negotiating your own workation.
+
+As I want to explain, this style of working remotely does not have to be a trade-off were you bargain some percentage 
+from your productivitey for some good private time. In fact, when planned well, you might actually profit in both areas:
+increased productivity and have some fun times.
+
+
+---- 
+
+Over the last years I went to "workation" on multiple occassions, mostly for a time of 2-6 weeks, either combining
+it with a "real" vacation for an additional 1-2 weeks, or "raw", only working. 
+
+Since I live and work in Germany, me destinations included Athens, Tunesia, Montenegro and - the classic for digital nomads - Bali/Indonesia.
+
 
 
 
 # Benefits of working "from somewhere else"
 
-In the end we will summarize x concrete arguments for your manager 
 
-
-As the german anglocism Workatoin shows, it's neither a vacation nor work, but combines both. 
+As the german anglocism "workation" indicates, this type of working remotely is neither a vacation nor work, but merges both. 
 
 
 
-Let's start with the obvisious: working remotly from another place where is a huge privilege of 
-knowledge workers like us software developers.
-
-
-You have the privilige of spending more time abroad, experience different cultures. 
+Let's start with the obvisious: working remotly from another place is a huge privilege of knowledge workers like us software developers. We have the privilige of flexible working hours, working from different locations, spending more time abroad,
+and ultemitaley experience different cultures.
 
 Since you are not on vacation and keep your daily routine you blend in with the locals 
 
@@ -49,18 +71,13 @@ that the 2 areas are different distinct that
 For example one might think that work "is draining our energy" so that we need life or abscence from work to "recharge".
 
 On the other hand taking vacation days is limited so it puts some pressure on us that we should use our vacation days
-"efficiently" and "take something from it.."
+"efficiently" and "take something from it..". Which in consequence turns vacation times into an obligation.
 
-
-For me the wonderful and really relazing realization was that there is not so much 
+For me the wonderful and really relaxing realization was that there is not so much 
 to balance against it other, but actually "working" can be "recharging" and can be vacation at the same time.
 And at the same time the work part of the traveling doesn't take away anything from the vacation part.
 
-Maybe I'm weird here but going on vacation for the purpose of "vacation" has a nothing appealing to me
-
-
-(Zitat von David Foster Wallace)
-
+Let me explain!
 
 
 
@@ -221,4 +238,12 @@ and just watch a movie in the evening in then go to bed early.
 
 
 
+
+## NOtes
+
+
+Maybe I'm weird here but going on vacation for the purpose of "vacation" has a nothing appealing to me
+
+
+(Zitat von David Foster Wallace)
 

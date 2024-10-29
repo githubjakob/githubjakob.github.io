@@ -7,17 +7,20 @@ published: false
 
 
 
+In his talk about "Philosophy of Software Design" John Ousterhout  asks a fasziniating question:
+
 https://www.youtube.com/watch?v=bmSAYlu0NcY
 
 If you had to pick one idea, one concept the most important thing in computer science what would you pick
 
 
+
 - abstraction
-- testing
 - composition
 - complexity
-- layers of abstraction (Donald Knuth)
+- layers of abstraction
 - problem decomposition 
+- testing
 
 
 How do you take a problem or system and chop it up into pieces that you can build relatively independenently
