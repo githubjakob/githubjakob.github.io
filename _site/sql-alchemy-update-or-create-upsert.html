@@ -89,7 +89,7 @@ else:
 
 <p>In our case, two transactions would concurrently SELECT and INSERT data for the same key, causing the issue when both transactions first SELECT and return no data, and then both transactions INSERT.</p>
 
-<table>
+<div class="table-wrapper" markdown="block"><table>
   <thead>
     <tr>
       <th>T1</th>
@@ -122,7 +122,7 @@ else:
       <td>unique constraint violation</td>
     </tr>
   </tbody>
-</table>
+</table></div>
 
 <h2 id="but-acid">But… ACID??</h2>
 
@@ -149,7 +149,7 @@ multiple reads return the same data.</p>
 
 <p>After some research, we gathered the different solutions that we could find and weighted their various pros and cons.</p>
 
-<table>
+<div class="table-wrapper" markdown="block"><table>
   <thead>
     <tr>
       <th>Type</th>
@@ -184,7 +184,7 @@ multiple reads return the same data.</p>
       <td> </td>
     </tr>
   </tbody>
-</table>
+</table></div>
 
 <h2 id="the-final-version">The final version</h2>
 

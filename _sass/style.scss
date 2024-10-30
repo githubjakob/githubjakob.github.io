@@ -128,3 +128,12 @@ a:visited {
 a {
   color: black;
 }
+
+main {
+  overflow-x: auto;
+}
+
+.table-wrapper {
+  display: block;
+  overflow-x: auto;
+}
