@@ -10,10 +10,13 @@ entries:
 
   - title: Blog
     post_list:
-      limit: 5
+      limit: 4
       show_more: true
       show_more_text: See archive...
       show_more_url: archive.html
+
+  - title: Today I learned
+    url: til
 
   - title: Imprint
     url: imprint

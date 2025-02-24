@@ -1,0 +1,17 @@
+---
+layout: default
+title: Today I Learned
+permalink: /til.html
+---
+<a href="/">.. back</a>
+<h1>Today I Learned</h1>
+
+{% for post in site.posts %}
+{% if post.categories contains 'til' %}
+<h3>{{ post.title }}</h3>
+<small>{{ post.date | date: "%B %d, %Y" }}</small>
+<p>{{ post.excerpt }}</p>
+{% endif %}
+{% endfor %}
+
+<hr>
