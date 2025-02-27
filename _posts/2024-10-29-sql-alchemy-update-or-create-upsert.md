@@ -1,8 +1,7 @@
 ---
 layout: post
 slug: sql-alchemy-update-or-create-upsert
-title: "SQLAlchemy Upserts in PostgreSQL: Conquering Concurrency Challenges for Your Flask API"
-draft: true
+title: "SQLAlchemy Upserts in PostgreSQL: Solving Concurrency Challenges for Your Flask API"
 ---
 
 

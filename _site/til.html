@@ -29,6 +29,20 @@
 
 
 
+<h3>Python Dependency Checker</h3>
+<small>February 27, 2025</small>
+<p><p>I discovered <a href="https://github.com/gauge-sh/tach">Tach</a>, a static code checker for Python projects to enforce dependencies between modules. For example in a layered backend architecture you can enforce that <code class="language-plaintext highlighter-rouge">controller</code> modules can only depend on <code class="language-plaintext highlighter-rouge">service</code> and <code class="language-plaintext highlighter-rouge">repository</code> modules and, e.g. <code class="language-plaintext highlighter-rouge">repository</code> modules cannot import from <code class="language-plaintext highlighter-rouge">controller</code> modules. Looks interesting also to enforce code boundaries between modules (or components) in a modular monolith. I’d like to check it out in one of my next projects.</p>
+</p>
+
+
+
+<h3>Vite Proxy Server</h3>
+<small>February 25, 2025</small>
+<p><p>Today I learned that <a href="https://vite.dev/config/server-options#server-proxy">Vite has a proxy server config</a> so that in local development API requests can go to <code class="language-plaintext highlighter-rouge">http://localhost:3000/api</code> while the server can run on <code class="language-plaintext highlighter-rouge">http://localhost:5000</code>. This saves you from having to configure CORS in the backend for local dev purposes only.</p>
+</p>
+
+
+
 <h3>JSDOM</h3>
 <small>February 24, 2025</small>
 <p><p><a href="https://www.epicweb.dev/why-i-won-t-use-jsdom">Blog post by Artem Zakharchenko (creator of MSW) about JSDOM</a>, the issues with re-implementing a browser env in Node, and alternatives like <a href="https://main.vitest.dev/guide/browser/">Vitest Browser Mode</a>.</p>

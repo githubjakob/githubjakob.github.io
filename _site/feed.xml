@@ -1,5 +1,193 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-02-24T18:23:24+01:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Jakob Zanker</title><subtitle>Software Developer, based in Munich
-</subtitle><author><name>Jakob Zanker</name></author><entry><title type="html">Figma/Tailwind Semantic Design Tokens Tutorial</title><link href="http://localhost:4000/16-00-til-semantic-design-tokens.html" rel="alternate" type="text/html" title="Figma/Tailwind Semantic Design Tokens Tutorial" /><published>2025-02-24T00:00:00+01:00</published><updated>2025-02-24T00:00:00+01:00</updated><id>http://localhost:4000/16-00-TIL-semantic-design-tokens</id><content type="html" xml:base="http://localhost:4000/16-00-til-semantic-design-tokens.html">&lt;p&gt;Epicweb.dev has a &lt;a href=&quot;https://www.epicweb.dev/tutorials/tailwind-color-tokens&quot;&gt;great, free tutorial on how to use semantic tokens&lt;/a&gt; with Tailwind and Figma.&lt;/p&gt;</content><author><name>Jakob Zanker</name></author><category term="til" /><summary type="html">Epicweb.dev has a great, free tutorial on how to use semantic tokens with Tailwind and Figma.</summary></entry><entry><title type="html">JSDOM</title><link href="http://localhost:4000/17-00-til-jsom.html" rel="alternate" type="text/html" title="JSDOM" /><published>2025-02-24T00:00:00+01:00</published><updated>2025-02-24T00:00:00+01:00</updated><id>http://localhost:4000/17-00-TIL-jsom</id><content type="html" xml:base="http://localhost:4000/17-00-til-jsom.html">&lt;p&gt;&lt;a href=&quot;https://www.epicweb.dev/why-i-won-t-use-jsdom&quot;&gt;Blog post by Artem Zakharchenko (creator of MSW) about JSDOM&lt;/a&gt;, the issues with re-implementing a browser env in Node, and alternatives like &lt;a href=&quot;https://main.vitest.dev/guide/browser/&quot;&gt;Vitest Browser Mode&lt;/a&gt;.&lt;/p&gt;</content><author><name>Jakob Zanker</name></author><category term="til" /><summary type="html">Blog post by Artem Zakharchenko (creator of MSW) about JSDOM, the issues with re-implementing a browser env in Node, and alternatives like Vitest Browser Mode.</summary></entry><entry><title type="html">Implementing an Auth0 Client Application from Scratch (OAuth Web Message Response Mode - Part 2)</title><link href="http://localhost:4000/oauth-web-message-response-mode-in-practice-with-auth0.html" rel="alternate" type="text/html" title="Implementing an Auth0 Client Application from Scratch (OAuth Web Message Response Mode - Part 2)" /><published>2024-07-21T00:00:00+02:00</published><updated>2024-07-21T00:00:00+02:00</updated><id>http://localhost:4000/oauth-web-message-response-mode-in-practice-with-auth0</id><content type="html" xml:base="http://localhost:4000/oauth-web-message-response-mode-in-practice-with-auth0.html">&lt;p&gt;In &lt;a href=&quot;/oauth-web-message-response-mode.html&quot;&gt;part one&lt;/a&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-02-27T13:19:59+01:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Jakob Zanker</title><subtitle>Software Developer, based in Munich
+</subtitle><author><name>Jakob Zanker</name></author><entry><title type="html">Python Dependency Checker</title><link href="http://localhost:4000/til-python-deps.html" rel="alternate" type="text/html" title="Python Dependency Checker" /><published>2025-02-27T00:00:00+01:00</published><updated>2025-02-27T00:00:00+01:00</updated><id>http://localhost:4000/TIL-python-deps</id><content type="html" xml:base="http://localhost:4000/til-python-deps.html">&lt;p&gt;I discovered &lt;a href=&quot;https://github.com/gauge-sh/tach&quot;&gt;Tach&lt;/a&gt;, a static code checker for Python projects to enforce dependencies between modules. For example in a layered backend architecture you can enforce that &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;controller&lt;/code&gt; modules can only depend on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;service&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;repository&lt;/code&gt; modules and, e.g. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;repository&lt;/code&gt; modules cannot import from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;controller&lt;/code&gt; modules. Looks interesting also to enforce code boundaries between modules (or components) in a modular monolith. I’d like to check it out in one of my next projects.&lt;/p&gt;</content><author><name>Jakob Zanker</name></author><category term="til" /><summary type="html">I discovered Tach, a static code checker for Python projects to enforce dependencies between modules. For example in a layered backend architecture you can enforce that controller modules can only depend on service and repository modules and, e.g. repository modules cannot import from controller modules. Looks interesting also to enforce code boundaries between modules (or components) in a modular monolith. I’d like to check it out in one of my next projects.</summary></entry><entry><title type="html">Vite Proxy Server</title><link href="http://localhost:4000/til-vite-proxy.html" rel="alternate" type="text/html" title="Vite Proxy Server" /><published>2025-02-25T00:00:00+01:00</published><updated>2025-02-25T00:00:00+01:00</updated><id>http://localhost:4000/TIL-vite-proxy</id><content type="html" xml:base="http://localhost:4000/til-vite-proxy.html">&lt;p&gt;Today I learned that &lt;a href=&quot;https://vite.dev/config/server-options#server-proxy&quot;&gt;Vite has a proxy server config&lt;/a&gt; so that in local development API requests can go to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://localhost:3000/api&lt;/code&gt; while the server can run on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://localhost:5000&lt;/code&gt;. This saves you from having to configure CORS in the backend for local dev purposes only.&lt;/p&gt;</content><author><name>Jakob Zanker</name></author><category term="til" /><summary type="html">Today I learned that Vite has a proxy server config so that in local development API requests can go to http://localhost:3000/api while the server can run on http://localhost:5000. This saves you from having to configure CORS in the backend for local dev purposes only.</summary></entry><entry><title type="html">JSDOM</title><link href="http://localhost:4000/17-00-til-jsom.html" rel="alternate" type="text/html" title="JSDOM" /><published>2025-02-24T00:00:00+01:00</published><updated>2025-02-24T00:00:00+01:00</updated><id>http://localhost:4000/17-00-TIL-jsom</id><content type="html" xml:base="http://localhost:4000/17-00-til-jsom.html">&lt;p&gt;&lt;a href=&quot;https://www.epicweb.dev/why-i-won-t-use-jsdom&quot;&gt;Blog post by Artem Zakharchenko (creator of MSW) about JSDOM&lt;/a&gt;, the issues with re-implementing a browser env in Node, and alternatives like &lt;a href=&quot;https://main.vitest.dev/guide/browser/&quot;&gt;Vitest Browser Mode&lt;/a&gt;.&lt;/p&gt;</content><author><name>Jakob Zanker</name></author><category term="til" /><summary type="html">Blog post by Artem Zakharchenko (creator of MSW) about JSDOM, the issues with re-implementing a browser env in Node, and alternatives like Vitest Browser Mode.</summary></entry><entry><title type="html">Figma/Tailwind Semantic Design Tokens Tutorial</title><link href="http://localhost:4000/16-00-til-semantic-design-tokens.html" rel="alternate" type="text/html" title="Figma/Tailwind Semantic Design Tokens Tutorial" /><published>2025-02-24T00:00:00+01:00</published><updated>2025-02-24T00:00:00+01:00</updated><id>http://localhost:4000/16-00-TIL-semantic-design-tokens</id><content type="html" xml:base="http://localhost:4000/16-00-til-semantic-design-tokens.html">&lt;p&gt;Epicweb.dev has a &lt;a href=&quot;https://www.epicweb.dev/tutorials/tailwind-color-tokens&quot;&gt;great, free tutorial on how to use semantic tokens&lt;/a&gt; with Tailwind and Figma.&lt;/p&gt;</content><author><name>Jakob Zanker</name></author><category term="til" /><summary type="html">Epicweb.dev has a great, free tutorial on how to use semantic tokens with Tailwind and Figma.</summary></entry><entry><title type="html">SQLAlchemy Upserts in PostgreSQL: Solving Concurrency Challenges for Your Flask API</title><link href="http://localhost:4000/sql-alchemy-update-or-create-upsert.html" rel="alternate" type="text/html" title="SQLAlchemy Upserts in PostgreSQL: Solving Concurrency Challenges for Your Flask API" /><published>2024-10-29T00:00:00+01:00</published><updated>2024-10-29T00:00:00+01:00</updated><id>http://localhost:4000/sql-alchemy-update-or-create-upsert</id><content type="html" xml:base="http://localhost:4000/sql-alchemy-update-or-create-upsert.html">&lt;p&gt;Recently my team and I had to implement an “update or create” (or upsert) function with SqlAlchemy (using PostgreSQL) for a Flask API that can be safely called with multiple concurrent requests.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/update-or-insert.jpg&quot; alt=&quot;Not sure Meme&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Since SqlAlchemy does not support “upsert” out-of-the-box, this was an interesting challenge and revealed some interesting details about concurrency control with SqlAlchemy and PostgreSQL.&lt;/p&gt;
+
+&lt;p&gt;In the end, we settled for a solution implementing “optimistic concurrency control” using a simple try-catch.&lt;/p&gt;
+
+&lt;p&gt;You can find the code below, and the &lt;a href=&quot;https://github.com/githubjakob/flask-sqlalchemy-upsert&quot;&gt;full working demo Flask application with the solution in my Github repo&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-naive-approach&quot;&gt;The “naive approach”&lt;/h2&gt;
+
+&lt;p&gt;Let’s start with the naive approach and the problem:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;query = db.session.query(model).filter(and_(*filters))
+existing_model = query.one_or_none()
+
+if existing_model:
+    model = create_data_model
+    model.id = existing_model.id
+    model = db.session.merge(model)
+else:
+    model = create_data_model
+    db.session.add(model)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;After running with this code for a while in production, our error reporting in Sentry started to show this error.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sqlalchemy.exc.IntegrityError: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/jackie-chan-meme.gif&quot; alt=&quot;Jackie Chan But Why Meme&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-going-on&quot;&gt;What is going on?&lt;/h2&gt;
+
+&lt;p&gt;It turned out that sometimes we received API requests that caused updates for the same key “at the same time”, triggering a race condition in our implementation.&lt;/p&gt;
+
+&lt;p&gt;Analyzing the problem revelead that our upsert implementation was not thread-safe.&lt;/p&gt;
+
+&lt;p&gt;In our case, two transactions would concurrently SELECT and INSERT data for the same key, causing the issue when both transactions first SELECT and return no data, and then both transactions INSERT.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;T1&lt;/th&gt;
+      &lt;th&gt;T2&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;SELECT returns None&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;SELECT returns None&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;INSERT&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;commit&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;INSERT&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;unique constraint violation&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;but-acid&quot;&gt;But… ACID??&lt;/h2&gt;
+
+&lt;p&gt;This situation left us initially quite confused, since we understood the &lt;a href=&quot;https://en.wikipedia.org/wiki/ACID&quot;&gt;ACID properties&lt;/a&gt; completely wrong.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/well-yes-meme.png&quot; alt=&quot;Well Yes Meme&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The first approach of one of our developers was to explicitly start a transaction before the SELECT, under the wrong assumption that the ATOMICITY property of the transactions would imply that all operations within one transactions running in one unit.&lt;/p&gt;
+
+&lt;p&gt;As it turns out, ATOMICITY here only means that transactions either have an effect or not - all, or nothing.&lt;/p&gt;
+
+&lt;p&gt;ATOMICITY does not mean that all operations within one transaction happen in one atomic block without any interference from other transactions&lt;/p&gt;
+
+&lt;p&gt;What we are dealing here with is rather an issue of the I in ACID: ISOLATION.&lt;/p&gt;
+
+&lt;p&gt;In the default PostgreSQL isolation level &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;read-committed&lt;/code&gt; you cannot expect that during the time of a transaction 
+multiple reads return the same data.&lt;/p&gt;
+
+&lt;p&gt;So we have to look out for another solution.&lt;/p&gt;
+
+&lt;h2 id=&quot;alternative-implementation-with-sqlalchemy&quot;&gt;Alternative implementation with SqlAlchemy&lt;/h2&gt;
+
+&lt;p&gt;There are &lt;a href=&quot;https://stackoverflow.com/questions/7165998/how-to-do-an-upsert-with-sqlalchemy&quot;&gt;several&lt;/a&gt; &lt;a href=&quot;https://stackoverflow.com/questions/74429898/sqlalchemy-insert-or-update-upsert-using-orm-session&quot;&gt;questions&lt;/a&gt; &lt;a href=&quot;https://stackoverflow.com/questions/41724658/how-to-do-a-proper-upsert-using-sqlalchemy-on-postgresql&quot;&gt;on Stackoverflow&lt;/a&gt; discussing the topic. But none offered a really satisfying solution.&lt;/p&gt;
+
+&lt;p&gt;After some research, we gathered the different solutions that we could find and weighted their various pros and cons.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Type&lt;/th&gt;
+      &lt;th&gt;Approach&lt;/th&gt;
+      &lt;th&gt;Assessment&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;pessimistic, row level locking&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;with_for_update&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;does not work when the row to be updated does not exist yet&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;optimistic update&lt;/td&gt;
+      &lt;td&gt;on_conflict_do_update&lt;/td&gt;
+      &lt;td&gt;leaving ORM level (therefore, no update of relationships, problems with inherited models)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;pessimistic, locking&lt;/td&gt;
+      &lt;td&gt;PostgreSQL Advisory Lock / Lock table&lt;/td&gt;
+      &lt;td&gt;the other transaction will not wait but fail, manual retry needed&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Change DB Isolation Level&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;can only be configured when the session is started, degenerated performance&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;optimistic update&lt;/td&gt;
+      &lt;td&gt;try-except block&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;the-final-version&quot;&gt;The final version&lt;/h2&gt;
+
+&lt;p&gt;In the end, we settled for the “optimistic concurrency control” version of a solution with a relatively simple try-catch.&lt;/p&gt;
+
+&lt;p&gt;The rough idea is to optimistically perform the SELECT and INSERT (same as in the naive solution), 
+but to catch the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IntegrityError&lt;/code&gt; if the race condition occurs and then perform an UPDATE.&lt;/p&gt;
+
+&lt;p&gt;Two things to highlight:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;When the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IntegrityError&lt;/code&gt; is thrown, we need to rollback the transaction. In order to avoid that we rollback the entire 
+transaction, we can use a nested transaction and only rollback the part that is related to the upsert that caused the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IntegrityError&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;When the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IntegrityError&lt;/code&gt; is thrown, we want to ensure that we only perform the update when we encountered the right &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;UniqueViolation&lt;/code&gt;
+and not some other violation related to the model we are about to insert, e.g. violating some other non-null constraint. For this we 
+can parse the exception inside &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IntegrityError&lt;/code&gt; and check that it contains the names of the columns we used as keys - not super nice, but it works.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Here is the core part of our solution (&lt;a href=&quot;https://github.com/githubjakob/flask-sqlalchemy-upsert/blob/eb36dc189890bb8cf89eb6ff1e1c705f8c4f4765/repository.py#L93&quot;&gt;for full code see my Github repo&lt;/a&gt;):&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;query = db.session.query(self.model).filter(and_(*filters))
+existing_model = query.one_or_none()
+
+checkpoint = db.session.begin_nested()
+
+if existing_model:
+    model = self._merge_models(existing_model, create_data_model)
+else:
+    model = create_data_model
+    db.session.add(model)
+
+try:
+    # Attempt to upsert in a nested transaction
+    checkpoint.commit()
+except IntegrityError as e:
+    # Catching the constraint violation in case of a race condition
+    # which can happen when transaction A attempts to create the model
+    # while transaction B just did create it
+    # in which case we rollback the attempt, and then re-try with a merge
+    checkpoint.rollback()
+
+    # we only re-try if it failed for the right reason
+    if not self._is_matching_unique_constraint_violation(e):
+        raise e
+
+    existing_model = query.one()
+    model = self._merge_models(existing_model, create_data_model)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Jakob Zanker</name></author><summary type="html">Recently my team and I had to implement an “update or create” (or upsert) function with SqlAlchemy (using PostgreSQL) for a Flask API that can be safely called with multiple concurrent requests.</summary></entry><entry><title type="html">Implementing an Auth0 Client Application from Scratch (OAuth Web Message Response Mode - Part 2)</title><link href="http://localhost:4000/oauth-web-message-response-mode-in-practice-with-auth0.html" rel="alternate" type="text/html" title="Implementing an Auth0 Client Application from Scratch (OAuth Web Message Response Mode - Part 2)" /><published>2024-07-21T00:00:00+02:00</published><updated>2024-07-21T00:00:00+02:00</updated><id>http://localhost:4000/oauth-web-message-response-mode-in-practice-with-auth0</id><content type="html" xml:base="http://localhost:4000/oauth-web-message-response-mode-in-practice-with-auth0.html">&lt;p&gt;In &lt;a href=&quot;/oauth-web-message-response-mode.html&quot;&gt;part one&lt;/a&gt;
 we explored how the OAuth response mode &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;web_message&lt;/code&gt; works and how it is using the post message 
 web API to return the authorization code to the client application.&lt;/p&gt;
 

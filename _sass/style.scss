@@ -42,7 +42,7 @@ h2, h3, h4, h5, h6 { margin-top: 0; margin-bottom: 0; }
 
 hr { margin: 2rem 0; }
 
-p { margin: 1rem 0; }
+p { margin: 16px 0; color: #3c3c43 }
 
 li { margin: 0.4rem 0; }
 
@@ -71,9 +71,11 @@ table, th, td {
 }
 
 code {
-  color: black;
+  color: #3451b2;
   font-family: monospace;
   font-size: 14px;
+  border-radius: 4px;
+  padding: 3px 6px;
 
   background: rgb(242, 242, 242);
 }
@@ -122,11 +124,15 @@ img + em {
 }
 
 a:visited {
-  color: black;
+  color: #3a5ccc;
 }
 
 a {
-  color: black;
+  font-weight: 500;
+  color: #3a5ccc;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color .25s,opacity .25s;
 }
 
 main {
