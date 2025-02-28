@@ -87,13 +87,13 @@ There are [several](https://stackoverflow.com/questions/7165998/how-to-do-an-ups
 After some research, we gathered the different solutions that we could find and weighted their various pros and cons.
 
 
-| Type                           | Approach                            | Assessment                                                                            |
-|--------------------------------|-------------------------------------|---------------------------------------------------------------------------------------|
-| pessimistic, row level locking | `with_for_update`                   | does not work when the row to be updated does not exist yet                           |
+| Type                           | Approach                            | Assessment                                                                           |
+|--------------------------------|-------------------------------------|--------------------------------------------------------------------------------------|
+| pessimistic, row level locking | `with_for_update`                   | does not work when the row to be updated does not exist                           |
 | optimistic update              | on_conflict_do_update               | leaving ORM level (therefore, no update of relationships, problems with inherited models) |
-| pessimistic, locking           | PostgreSQL Advisory Lock / Lock table | the other transaction will not wait but fail, manual retry needed                     |
-| Change DB Isolation Level      |                                     | can only be configured when the session is started, degenerated performance           |
-| optimistic update              | try-except block                    |                                                                                       |
+| pessimistic, locking           | PostgreSQL Advisory Lock / Lock table | the other transaction will not wait but fail, manual retry needed                    |
+| Change DB Isolation Level      |                                     | can only be configured when the session is started, degenerated performance          |
+| optimistic update              | try-except block                    |                                                                                      |
 
 
 ## The final version
